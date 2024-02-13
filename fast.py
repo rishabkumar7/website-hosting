@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, status, File, UploadFile, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
 import os
@@ -21,7 +21,7 @@ app.mount("/upload", StaticFiles(directory="uploads"), name="upload")
 async def read_homepage():
     return FileResponse('static/index.html')
 
-@app.post("/upload/")
+@app.post("/upload/", status_code=status.HTTP_201_CREATED)
 async def upload_files(html: UploadFile = File(...), css: UploadFile = File(...), js: UploadFile = File(...)):
     # Create a unique directory for this set of uploads
     unique_dir = str(uuid.uuid4())
