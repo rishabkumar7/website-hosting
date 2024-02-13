@@ -1,0 +1,15 @@
+<html>
+        <head>
+            <title>Upload Static Files</title>
+            <link rel="stylesheet" type="text/css" href="/static/style.css" />
+        </head>
+        <body>
+            <h1>Static Site Uploader</h1>
+            <form action="/upload/" enctype="multipart/form-data" method="post">
+                HTML: <input type="file" name="html"><br><br>
+                CSS: <input type="file" name="css"><br><br>
+                JS: <input type="file" name="js"><br><br>
+                <input type="submit">
+            </form>
+        </body>
+    </html>

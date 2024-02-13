@@ -12,63 +12,14 @@ home_url = "example.com"
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # Mount a static directory to serve uploaded files
-app.mount("/static", StaticFiles(directory="uploads"), name="static")
+app.mount("/upload", StaticFiles(directory="uploads"), name="upload")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_homepage():
-    content = """
-    <html>
-        <head>
-            <title>Upload Static Files</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f0f0f0;
-                    margin: 0;
-                    padding: 0;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                }
-                form {
-                    background: white;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
-                h1 {
-                    color: #333;
-                }
-                input[type="file"] {
-                    margin-bottom: 20px;
-                }
-                input[type="submit"] {
-                    background: #007bff;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                }
-                input[type="submit"]:hover {
-                    background: #0056b3;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>Static Site Uploader</h1>
-            <form action="/upload/" enctype="multipart/form-data" method="post">
-                HTML: <input type="file" name="html"><br><br>
-                CSS: <input type="file" name="css"><br><br>
-                JS: <input type="file" name="js"><br><br>
-                <input type="submit">
-            </form>
-        </body>
-    </html>
-    """
-    return content
+    return FileResponse('static/index.html')
 
 @app.post("/upload/")
 async def upload_files(html: UploadFile = File(...), css: UploadFile = File(...), js: UploadFile = File(...)):
@@ -84,7 +35,7 @@ async def upload_files(html: UploadFile = File(...), css: UploadFile = File(...)
         with open(file_location, "wb+") as file_object:
             file_object.write(file.file.read())
 
-    return {"message": f"Files uploaded successfully! Access your site at: {home_url}/static/{unique_dir}/index.html"}
+    return {"message": f"Files uploaded successfully! Access your site at: {home_url}/upload/{unique_dir}/index.html"}
 
 @app.get("/site/{unique_dir}/")
 async def serve_site(unique_dir: str):
